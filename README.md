@@ -35,7 +35,7 @@ This project demonstrates how to build microservices using Nest.js with communic
 1. Clone the repository:
 
    ```bash
-   git clone <repository_url>
+   git clone https://github.com/himabindukalla/microservices.git
    cd nest-microservices-example
    ```
 

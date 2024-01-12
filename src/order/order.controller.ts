@@ -8,33 +8,29 @@ import { Order } from './order.schema';
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
-  @Post()
-  create(@Body() orderData: Order) {
+  @MessagePattern({ cmd: 'createOrder' })
+  create({ orderData }: { orderData: Order }) {
+    // console.log("in controller", orderData)
     return this.orderService.create(orderData);
   }
 
-  @Get()
+  @MessagePattern({ cmd: 'findAllOrders' })
   findAll() {
     return this.orderService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
+  @MessagePattern({ cmd: 'findOneOrder' })
+  findOne({ id }: { id: string }) {
     return this.orderService.findOne(id);
   }
 
-  @Put(':id')
-  update(@Param('id') id: string, @Body() orderData: Order) {
+  @MessagePattern({ cmd: 'updateOrder' })
+  update({ id, orderData }: { id: string, orderData: Order }) {
     return this.orderService.update(id, orderData);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
+  @MessagePattern({ cmd: 'removeOrder' })
+  remove({ id }: { id: string }) {
     return this.orderService.remove(id);
-  }
-
-  @MessagePattern({ cmd: 'findAllOrders' })
-  async findAllOrders() {
-    return this.orderService.findAll();
   }
 }

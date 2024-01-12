@@ -8,33 +8,31 @@ import { Product } from './product.schema';
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
-  @Post()
+
+  @MessagePattern({ cmd: 'createProduct' })
   create(@Body() productData: Product) {
     return this.productService.create(productData);
   }
 
-  @Get()
+  @MessagePattern({ cmd: 'findAllProducts' })
   findAll() {
     return this.productService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.productService.findOne(id);
+  @MessagePattern({ cmd: 'findOneProduct' })
+  findOne({ productId }: { productId: string }) {
+    // console.log("in controllers", productId)
+    return this.productService.findOne(productId);
   }
 
-  @Put(':id')
-  update(@Param('id') id: string, @Body() productData: Product) {
+  @MessagePattern({ cmd: 'updateProduct' })
+  update({ id, productData }: { id: string, productData: Product }) {
+    // console.log("in controller", id,productData)
     return this.productService.update(id, productData);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
+  @MessagePattern({ cmd: 'removeProduct' })
+  remove({ id }: { id: string }) {
     return this.productService.remove(id);
-  }
-
-  @MessagePattern({ cmd: 'findAllProducts' })
-  async findAllProducts() {
-    return this.productService.findAll();
   }
 }

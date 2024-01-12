@@ -1,8 +1,8 @@
 // src/api-gateway.controller.ts
 import { Controller, Get, Post, Put, Delete, Body, Param } from '@nestjs/common';
 import { ClientProxy, ClientProxyFactory, Transport } from '@nestjs/microservices';
-import { Product } from './product/product.schema';
 import { Order } from './order/order.schema';
+import { Product } from './product/product.schema';
 
 @Controller()
 export class ApiGatewayController {
@@ -26,22 +26,24 @@ export class ApiGatewayController {
 
   @Get('products/:id')
   async getProduct(@Param('id') id: string) {
-    return this.productMicroservice.send({ cmd: 'findOneProduct' }, id);
+    const productId = id;
+    return this.productMicroservice.send({ cmd: 'findOneProduct' }, {productId});
   }
 
   @Post('products')
   async createProduct(@Body() productData: Product) {
-    return this.productMicroservice.send({ cmd: 'createProduct' }, productData);
+    return this.productMicroservice.send({ cmd: 'createProduct' }, {productData});
   }
 
   @Put('products/:id')
   async updateProduct(@Param('id') id: string, @Body() productData: Product) {
+    // console.log("here in get id",id,productData);
     return this.productMicroservice.send({ cmd: 'updateProduct' }, { id, productData });
   }
 
   @Delete('products/:id')
   async deleteProduct(@Param('id') id: string) {
-    return this.productMicroservice.send({ cmd: 'removeProduct' }, id);
+    return this.productMicroservice.send({ cmd: 'removeProduct' }, {id});
   }
 
   @Get('orders')
@@ -51,13 +53,13 @@ export class ApiGatewayController {
 
   @Get('orders/:id')
   async getOrder(@Param('id') id: string) {
-    return this.orderMicroservice.send({ cmd: 'findOneOrder' }, id);
+    return this.orderMicroservice.send({ cmd: 'findOneOrder' }, {id});
   }
 
   @Post('orders')
   async createOrder(@Body() orderData: Order) {
-    // Assuming orderData has a 'productId' field indicating the product associated with the order
-    const createdOrder = await this.orderMicroservice.send({ cmd: 'createOrder' }, orderData);
+    // console.log("api gateway", orderData)
+    const createdOrder = await this.orderMicroservice.send({ cmd: 'createOrder' }, {orderData});
 
     // Decrease the count of the corresponding product
     this.productMicroservice.send({ cmd: 'decreaseProductCount' }, orderData.products);
@@ -72,6 +74,6 @@ export class ApiGatewayController {
 
   @Delete('orders/:id')
   async deleteOrder(@Param('id') id: string) {
-    return this.orderMicroservice.send({ cmd: 'removeOrder' }, id);
+    return this.orderMicroservice.send({ cmd: 'removeOrder' }, {id});
   }
 }
